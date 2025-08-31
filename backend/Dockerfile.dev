@@ -1,0 +1,22 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install deps first (good cache)
+COPY package*.json ./
+RUN npm ci
+
+# Copy source
+COPY . .
+
+# Prisma: if your schema lives at src/prisma, copy it to /app/prisma
+# (skip if your prisma/ is already at project root)
+# RUN mkdir -p /app/prisma && cp -r src/prisma/* /app/prisma/
+
+# Generate Prisma client
+RUN npx prisma generate
+
+EXPOSE 3000
+
+# Dev command (hot reload)
+CMD ["npm", "run", "start:dev"]
